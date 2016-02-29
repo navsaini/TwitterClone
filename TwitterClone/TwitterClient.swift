@@ -95,11 +95,14 @@ class TwitterClient: BDBOAuth1SessionManager {
     
     func retweetWithID(id: Int, completion : (tweet : Tweet?, error: NSError?) -> ()){
         POST("1.1/statuses/retweet/\(id).json", parameters: nil, progress: nil, success: { (task: NSURLSessionDataTask, response:AnyObject?) -> Void in
+            
             var array : [NSDictionary] = [NSDictionary]()
             array.append(response as! NSDictionary)
             let tweets = Tweet.tweetsWithArray(array)
             completion(tweet: tweets[0], error: nil)
+            
             }) { (response: NSURLSessionDataTask?, error: NSError) -> Void in
+                print("there was an error")
                 completion(tweet: nil, error: error)
         }
     }

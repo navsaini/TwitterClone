@@ -28,7 +28,8 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
             }) { (error: NSError) -> () in
                 print("error loading tweets")
         }
-        // Do any additional setup after loading the view.
+        // Do any additional setup after loading the view
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -53,12 +54,36 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
         let tweet = tweets[indexPath.row]
+        
+        let imageView = cell.profImageView
+        let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:Selector("imageTapped:"))
+        imageView.userInteractionEnabled = true
+        imageView.addGestureRecognizer(tapGestureRecognizer)
+        
         cell.tweetLabel.text = tweet.text
         cell.userLabel.text = tweet.username.name as? String
         cell.profImageView.setImageWithURL(tweet.username.profileURL!)
         cell.retweetCountLabel.text = String(tweet.retweetCount)
         cell.favCountLabel.text = String(tweet.favCount)
         return cell
+    }
+    
+    func imageTapped(img: UIGestureRecognizer)
+    {
+        // Your action
+        print("image was clicked")
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let profileViewController = storyboard.instantiateViewControllerWithIdentifier("profileViewController") as! ProfileViewController
+        
+        
+        let cell = img.view!.superview?.superview as! UITableViewCell
+        let ip = self.tableView.indexPathForCell(cell)! as NSIndexPath
+        let tweet = self.tweets![ip.row] as Tweet
+        profileViewController.user = User(dictionary: tweet.user)
+        
+        self.navigationController?.pushViewController(profileViewController, animated: true)
+        
+        
     }
 
     @IBAction func retweetPressed(sender: AnyObject) {
@@ -97,14 +122,25 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         TwitterClient.sharedInstance.logout()
     }
     
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+        let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPathForCell(cell)
+        let tweet = tweets![indexPath!.row]
+        
+        let detailViewController = segue.destinationViewController as! DetailViewController
+        detailViewController.tweet = tweet
+        tableView.deselectRowAtIndexPath(indexPath!, animated: true)
+        
     }
-    */
+    
+    
+
 
 }
