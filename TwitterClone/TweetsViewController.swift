@@ -13,6 +13,8 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     var tweets: [Tweet]!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var tweetButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -29,6 +31,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
                 print("error loading tweets")
         }
         // Do any additional setup after loading the view
+        tweetButton.tag = 1
         
     }
 
@@ -129,14 +132,16 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        if sender!.tag == 0 {
+            let cell = sender as! UITableViewCell
+            let indexPath = tableView.indexPathForCell(cell)
+            let tweet = tweets![indexPath!.row]
         
-        let cell = sender as! UITableViewCell
-        let indexPath = tableView.indexPathForCell(cell)
-        let tweet = tweets![indexPath!.row]
-        
-        let detailViewController = segue.destinationViewController as! DetailViewController
-        detailViewController.tweet = tweet
-        tableView.deselectRowAtIndexPath(indexPath!, animated: true)
+            let detailViewController = segue.destinationViewController as! DetailViewController
+            detailViewController.tweet = tweet
+            tableView.deselectRowAtIndexPath(indexPath!, animated: true)
+        }
+    
         
     }
     

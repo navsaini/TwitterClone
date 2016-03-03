@@ -119,5 +119,15 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
+    func postTweet(params: NSDictionary, success: (User) -> (), failure: (NSError) -> ()) {
+        POST("1.1/statuses/update.json", parameters: params, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+            print("posted successfully")
+  
+            }, failure: { (task: NSURLSessionDataTask?,error: NSError) -> Void in
+                failure(error)
+                print("error, could not get user info")
+        })
+
+    }
 
 }
